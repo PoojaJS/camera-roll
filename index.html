@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Camera Roll | Stories, travel and memories</title>
+<meta name="description" content="Camera Roll: a personal blog of travel, photos and memories.">
+<meta name="theme-color" content="#0f141b">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0f141b;--panel:#171e28;--line:#2a3340;--text:#eef1f4;--muted:#9aa6b2;--sun:#f2b01e}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth;scroll-padding-top:100px}
+body{background:var(--bg);color:var(--text);font:17px/1.7 "DM Sans",system-ui,sans-serif}
+h1,h2,h3{font-family:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;line-height:1.02;letter-spacing:-.02em}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+.wrap{max-width:1080px;margin:0 auto;padding:0 28px}
+
+/* Navigation: floating pill that opens into a menu */
+.nav{position:fixed;top:14px;left:50%;transform:translateX(-50%);z-index:30;width:min(560px,calc(100% - 28px));background:rgba(23,30,40,.9);color:#eef1f4;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,.08);border-radius:28px;box-shadow:0 10px 40px rgba(0,0,0,.35);padding:9px 9px 9px 24px}
+.nav-bar{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.brand{font-family:"Bricolage Grotesque",Arial,sans-serif;font-weight:800;font-size:1.35rem;text-decoration:none;letter-spacing:-.02em}
+.nav-actions{display:flex;align-items:center;gap:6px}
+.nav button{width:44px;height:44px;border:0;border-radius:15px;cursor:pointer;font:inherit;display:grid;place-items:center}
+#themeBtn{background:transparent;color:#eef1f4;font-size:1.2rem}
+#themeBtn:hover{background:rgba(255,255,255,.1)}
+#menuBtn{background:#f3f3f1;color:#10161d;font-weight:800;letter-spacing:.12em}
+.nav-panel{display:grid;grid-template-rows:0fr;visibility:hidden;transition:grid-template-rows .3s ease,visibility 0s .3s}
+.nav.open .nav-panel{grid-template-rows:1fr;visibility:visible;transition-delay:0s}
+.nav-panel>div{overflow:hidden}
+.nav-links{display:flex;flex-wrap:wrap;gap:12px 30px;padding:24px 14px 12px}
+.nav-links a{text-decoration:none;font-size:1.15rem}
+.nav-links a:hover{color:var(--sun)}
+.nav-note{padding:0 14px 16px;color:#9aa6b2;font-size:.92rem}
+.nav :focus-visible{outline-offset:2px}
+body{transition:background .3s,color .3s}
+:root[data-theme="light"]{--bg:#f2f4f6;--panel:#e4e8ec;--line:#d2d8de;--text:#10161d;--muted:#566370}
+.tag{font-size:.9rem;color:var(--muted);margin-bottom:10px}
+
+/* Hero */
+.hero{display:grid;grid-template-columns:1.25fr 1fr;gap:48px;align-items:end;padding:130px 28px 80px}
+.hero h1{font-size:clamp(5rem,16vw,12.5rem);font-weight:800;margin-left:-.04em}
+.hero .sub{font-size:1.25rem;max-width:26ch;margin-top:24px;color:var(--muted)}
+.hero .sub b{color:var(--text);font-weight:500}
+.photo{position:relative;aspect-ratio:4/5;background:var(--panel);overflow:hidden;border-radius:4px}
+.photo img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.05)}
+.photo span{position:absolute;inset:0;display:grid;place-items:center;text-align:center;padding:30px;color:var(--muted)}
+.photo::after{content:"";position:absolute;left:0;bottom:0;width:100%;height:6px;background:var(--sun)}
+
+/* Sections */
+section{padding:80px 0;border-top:1px solid var(--line)}
+.head{display:flex;justify-content:space-between;align-items:end;gap:24px;margin-bottom:40px}
+.head h2{font-size:clamp(2.4rem,6vw,4rem);font-weight:800}
+.head p{color:var(--muted);max-width:36ch}
+
+/* Story list */
+.row{display:grid;grid-template-columns:150px 1fr auto;gap:24px;align-items:baseline;width:100%;padding:26px 0;border:0;border-top:1px solid var(--line);background:none;color:inherit;font:inherit;text-align:left;cursor:pointer}
+.row:last-child{border-bottom:1px solid var(--line)}
+.row .d,.row .g{color:var(--muted);font-size:.95rem}
+.row .tt{font-family:"Bricolage Grotesque",Arial,sans-serif;font-size:clamp(1.5rem,3.4vw,2.3rem);font-weight:500;letter-spacing:-.02em;transition:transform .25s,color .25s}
+.row:hover .tt,.row:focus-visible .tt{color:var(--sun);transform:translateX(10px)}
+#reader{display:none;max-width:680px}
+#reader h2{font-size:clamp(2.2rem,6vw,3.6rem);font-weight:800;margin:8px 0 28px}
+#reader p{margin-bottom:20px;font-size:1.1rem;line-height:1.85}
+#reader .meta{color:var(--muted)}
+#reader img{width:100%;border-radius:4px;margin-bottom:28px;filter:grayscale(.2)}
+.back-btn{margin-top:16px;padding:10px 22px;background:none;color:var(--text);border:1px solid var(--text);border-radius:999px;font:inherit;cursor:pointer}
+.back-btn:hover{background:var(--text);color:var(--bg)}
+
+/* Gallery */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.tile{position:relative;aspect-ratio:1;background:var(--panel);overflow:hidden;border-radius:4px}
+.tile:nth-child(1),.tile:nth-child(4){grid-row:span 2;aspect-ratio:auto}
+.tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1);transition:filter .4s,transform .6s}
+.tile:hover img{filter:grayscale(0);transform:scale(1.04)}
+.tile i{position:absolute;inset:0;display:grid;place-items:center;font-style:normal;color:var(--muted);font-size:.9rem;padding:12px;text-align:center}
+.tile em{position:absolute;left:12px;bottom:10px;z-index:2;font-style:normal;font-size:.9rem;text-shadow:0 1px 6px #000}
+
+/* About */
+.about{display:grid;grid-template-columns:1fr 1.4fr;gap:48px}
+.about h2{font-size:clamp(2.4rem,6vw,4rem);font-weight:800}
+.about p{font-size:1.2rem;margin-bottom:18px;max-width:56ch}
+
+/* Footer: still character, moving crowd */
+footer{background:#000;color:#f8f7f4}
+.f-top{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:32px;padding:64px 0 36px}
+.f-top h3{font-size:1.7rem;font-weight:800}
+.f-top small{display:block;color:#b5b5b5;margin-bottom:6px}
+.f-top p,.f-top a{display:block;color:#f8f7f4;text-decoration:none}
+.f-top .mut{color:#b5b5b5}
+.f-top a:hover{text-decoration:underline}
+.f-bar{display:flex;justify-content:space-between;align-items:end;padding-bottom:28px}
+.f-bar h2{font-size:clamp(2rem,5vw,3.2rem);font-weight:800}
+.f-bar a{color:#b5b5b5;text-decoration:none}
+.f-bar a:hover{color:#fff}
+.scene{position:relative;display:block;width:100%;height:clamp(380px,44vw,540px);background:#fff;border:0;padding:0;overflow:hidden;cursor:pointer}
+.scene:focus-visible{outline:4px solid var(--sun);outline-offset:-6px}
+.scene .name{position:absolute;inset:0;z-index:0;display:flex;justify-content:center;padding-top:2%;font:800 clamp(100px,22.7vw,370px)/1 "Bricolage Grotesque",Arial,sans-serif;letter-spacing:-.04em;color:#ececec;white-space:nowrap}
+.scene canvas{position:absolute;left:0;top:0;width:100%;height:100%}
+#rear{z-index:1}
+#front{z-index:3}
+.scene .me{position:absolute;z-index:2;left:50%;bottom:12px;transform:translateX(-50%);height:min(365px,82%);width:auto}
+.strip{background:#000;color:#8a8a8a;font-size:.8rem;padding:16px 28px}
+@media(max-width:760px){.f-top{grid-template-columns:1fr 1fr}.f-top div:first-child{grid-column:1/-1}.scene .me{height:min(310px,82%)}}
+@media(max-width:760px){
+  .hero,.about{grid-template-columns:1fr;gap:32px}
+  .row{grid-template-columns:1fr;gap:4px}
+  .grid{grid-template-columns:1fr 1fr}
+  .head{display:block}
+  
+}
+@media(prefers-reduced-motion:reduce){.track{animation:none}.row .tt,.tile img{transition:none}html{scroll-behavior:auto}}
+</style>
+</head>
+<body id="top">
+
+<nav class="nav" id="nav" aria-label="Main">
+  <div class="nav-bar">
+    <a class="brand" href="#top">Camera Roll</a>
+    <div class="nav-actions">
+      <button id="themeBtn" type="button" aria-label="Switch between dark and light mode">☾</button>
+      <button id="menuBtn" type="button" aria-expanded="false" aria-controls="navPanel" aria-label="Open menu">•••</button>
+    </div>
+  </div>
+  <div class="nav-panel" id="navPanel"><div>
+    <div class="nav-links"><a href="#stories">Stories</a><a href="#gallery">Photos</a><a href="#about">About</a></div>
+    <!-- EDIT: a short line shown inside the open menu -->
+    <p class="nav-note">Travel, photos and memories.</p>
+  </div></div>
+</nav>
+
+<main>
+  <div class="wrap hero">
+    <div>
+      <p class="tag">©2026 / Travel · Photos · Memories</p>
+      <h1>Theju.</h1>
+      <!-- EDIT: your own tagline -->
+      <p class="sub"><b>Travel, photos and memories</b> from the person who makes every trip better.</p>
+    </div>
+    <div class="photo">
+      <span>Put your favourite photo of Theju here (images/theju.jpg)</span>
+      <img src="images/theju.jpg" alt="Theju" onerror="this.style.display='none'">
+    </div>
+  </div>
+
+  <section id="stories">
+    <div class="wrap">
+      <div class="head"><h2>Stories</h2><p>From the day we met to everywhere we’ve been since.</p></div>
+      <div id="list"></div>
+      <article id="reader" tabindex="-1"></article>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="head"><h2>Photos</h2><p>Hover over a photo to bring back the colour.</p></div>
+      <div class="grid" id="grid"></div>
+    </div>
+  </section>
+
+  <section id="about">
+    <div class="wrap about">
+      <h2>About him</h2>
+      <div>
+        <!-- EDIT: write this in your own words -->
+        <p>Write a few lines about Theju: what he loves, what makes him laugh, how he plans a trip, the song he always hums.</p>
+        <p>Then say why you made this page for him.</p>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="f-top">
+      <div><h3>Camera Roll.</h3><p class="mut">Stories, travel and memories</p></div>
+      <div><small>Explore</small><a href="#stories">Stories</a><a href="#gallery">Photos</a><a href="#about">About</a></div>
+      <div><small>Made by</small><p>With love, for Theju</p><p class="mut">© 2026</p></div>
+    </div>
+    <div class="f-bar"><h2>See you around.</h2><a href="#" id="toTop">Back to top ↑</a></div>
+  </div>
+  <!-- The whole scene is one button: click it to pause or resume the crowd -->
+  <button class="scene" id="scene" type="button" aria-pressed="false" aria-label="Pause or resume the walking crowd">
+    <span class="name" aria-hidden="true">THEJU.</span>
+    <canvas id="rear" aria-hidden="true"></canvas>
+    <!-- LATER: save his illustrated character as images/footer/character.png -->
+    <img class="me" id="me" src="images/footer/character.png" alt="Illustration of Theju standing still">
+    <canvas id="front" aria-hidden="true"></canvas>
+  </button>
+  <div class="strip">The whole world walks past. Theju stays right here.</div>
+</footer>
+
+<script>
+/* ---- YOUR STORIES ----
+   Stories appear on the page in this order (chapter 1 first).
+   To add one: copy a block, paste it where you want it, change the words.
+   Leave a blank line between paragraphs.
+   photo is optional: save a picture in the images folder and put its name here,
+   for example photo: "images/rye.jpg" */
+const posts = [
+  {
+    title: "The day we met",
+    date: "Chapter 1",
+    tag: "Beginnings",
+    photo: "",
+    text: `Where were you, who spoke first, and what do you remember that he doesn’t?
+
+Write it the way you’d tell it to a friend.`
+  },
+  {
+    title: "Bachelors, together",
+    date: "Chapter 2",
+    tag: "Beginnings",
+    photo: "",
+    text: `The late nights, the favourite spots, the friends and the funny moments.
+
+When did you realise this was something special?`
+  },
+  {
+    title: "Our journey to the UK",
+    date: "Chapter 3",
+    tag: "Moving",
+    photo: "",
+    text: `The decision, the goodbyes, the flight and the first day after landing.
+
+What surprised you most, and what did you miss from home?`
+  },
+  {
+    title: "Masters, together",
+    date: "Chapter 4",
+    tag: "Masters",
+    photo: "",
+    text: `Lectures, deadlines and the cafés you studied in.
+
+What did you learn about each other during those months?`
+  },
+  {
+    title: "London days",
+    date: "Chapter 5",
+    tag: "London",
+    photo: "",
+    text: `Your first home together, your daily routine and the places that became yours.
+
+What will you always remember about living in London?`
+  },
+  {
+    title: "Moving to Manchester",
+    date: "Chapter 6",
+    tag: "Manchester",
+    photo: "",
+    text: `Why you moved, what the first week felt like, and what changed.
+
+What did you leave behind in London, and what did you gain?`
+  },
+  {
+    title: "Home in Manchester",
+    date: "Chapter 7",
+    tag: "Manchester",
+    photo: "",
+    text: `Your favourite streets, cafés and ordinary Sunday routines.
+
+What makes it feel like home now?`
+  },
+  {
+    title: "Scotland",
+    date: "Chapter 8",
+    tag: "Countries",
+    photo: "",
+    text: `Tell the story of Scotland. Think landscapes, weather and the long drives.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Wales",
+    date: "Chapter 9",
+    tag: "Countries",
+    photo: "",
+    text: `Tell the story of Wales. Think coastlines, castles and small towns.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Portugal",
+    date: "Chapter 10",
+    tag: "Countries",
+    photo: "",
+    text: `Tell the story of Portugal. Think sunsets, food and long walks.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Ireland",
+    date: "Chapter 11",
+    tag: "Countries",
+    photo: "",
+    text: `Tell the story of Ireland. Think green hills, music and cosy pubs.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Rye",
+    date: "Chapter 12",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of Rye. Think cobbled streets and tiny shops.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Bath",
+    date: "Chapter 13",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of Bath. Think honey-coloured stone and the old baths.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Sussex",
+    date: "Chapter 14",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of Sussex. Think countryside, cliffs and slow days.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Leeds",
+    date: "Chapter 15",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of Leeds. Think city streets and who you visited.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Brighton",
+    date: "Chapter 16",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of Brighton. Think seafront, pier and chips by the sea.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "Knutsford",
+    date: "Chapter 17",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of Knutsford. Think a quiet town and a slow afternoon.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "York",
+    date: "Chapter 18",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of York. Think city walls, the Minster and the Shambles.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  },
+  {
+    title: "The Cotswolds",
+    date: "Chapter 19",
+    tag: "UK trips",
+    photo: "",
+    text: `Tell the story of the Cotswolds. Think villages, rolling hills and cottages.
+
+Where did you stay and what did you eat? What’s the one moment you’ll both remember?`
+  }
+];
+
+/* ---- YOUR PHOTOS ----
+   Save pictures in the images folder and list them here. */
+const photos = [
+  { file: "images/photo1.jpg", caption: "Somewhere we loved" },
+  { file: "images/photo2.jpg", caption: "Golden hour" },
+  { file: "images/photo3.jpg", caption: "Mid-laugh" },
+  { file: "images/photo4.jpg", caption: "Wrong turn, right place" },
+  { file: "images/photo5.jpg", caption: "Lazy morning" },
+  { file: "images/photo6.jpg", caption: "Us" }
+];
+
+const list = document.getElementById("list");
+const reader = document.getElementById("reader");
+
+posts.forEach((p, i) => {
+  const b = document.createElement("button");
+  b.className = "row";
+  b.innerHTML = `<span class="d">${p.date}</span><span class="tt">${p.title}</span><span class="g">${p.tag}</span>`;
+  b.onclick = () => openPost(i);
+  list.appendChild(b);
+});
+
+function openPost(i) {
+  const p = posts[i];
+  const paras = p.text.split(/\n\s*\n/).map(t => `<p>${t}</p>`).join("");
+  const img = p.photo ? `<img src="${p.photo}" alt="" onerror="this.remove()">` : "";
+  reader.innerHTML = `<div class="meta">${p.tag} · ${p.date}</div><h2>${p.title}</h2>${img}${paras}
+    <button class="back-btn" onclick="closePost()">Back to all stories</button>`;
+  list.style.display = "none";
+  reader.style.display = "block";
+  reader.focus();
+  document.getElementById("stories").scrollIntoView();
+}
+function closePost() {
+  reader.style.display = "none";
+  list.style.display = "block";
+  document.getElementById("stories").scrollIntoView();
+}
+
+document.getElementById("grid").innerHTML = photos.map(p =>
+  `<div class="tile"><i>${p.caption}</i><img src="${p.file}" alt="${p.caption}" onerror="this.style.display='none'"><em>${p.caption}</em></div>`
+).join("");
+
+/* ---- TOP MENU AND DARK/LIGHT SWITCH ---- */
+(function () {
+  const nav = document.getElementById("nav"), mb = document.getElementById("menuBtn"), tb = document.getElementById("themeBtn");
+  const root = document.documentElement;
+  function setOpen(o) { nav.classList.toggle("open", o); mb.setAttribute("aria-expanded", o); mb.textContent = o ? "✕" : "•••"; }
+  mb.addEventListener("click", () => setOpen(!nav.classList.contains("open")));
+  nav.querySelectorAll(".nav-links a").forEach(a => a.addEventListener("click", () => setOpen(false)));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") setOpen(false); });
+  document.addEventListener("click", e => { if (!nav.contains(e.target)) setOpen(false); });
+  function theme(t) {
+    root.dataset.theme = t; tb.textContent = t === "light" ? "☀" : "☾";
+    try { localStorage.setItem("theju-theme", t); } catch (e) {}
+  }
+  let saved = null; try { saved = localStorage.getItem("theju-theme"); } catch (e) {}
+  theme(saved || "dark");
+  tb.addEventListener("click", () => theme(root.dataset.theme === "light" ? "dark" : "light"));
+})();
+
+/* ---- FOOTER SCENE ----
+   Uses images/footer/character.png (Theju) and images/footer/crowd-atlas.png (55 people).
+   If either file is missing, simple drawn placeholders appear instead. */
+(function () {
+  const scene = document.getElementById("scene"), rear = document.getElementById("rear"),
+        front = document.getElementById("front"), me = document.getElementById("me");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let sprites = [], paused = false, visible = true, raf = 0, last = 0, clock = 0, W = 0, H = 0, dpr = 1, rows = null;
+  const M = 150;
+
+  /* Placeholder Theju: black outfit, yellow glasses and shoes */
+  me.onerror = function () {
+    me.onerror = null;
+    const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 480"><g stroke="#000" stroke-width="5" stroke-linejoin="round"><circle cx="100" cy="60" r="38" fill="#fff"/><path d="M62 50c2-34 74-34 76 0c-14-14-62-14-76 0z" fill="#000"/><rect x="66" y="52" width="30" height="20" rx="7" fill="none" stroke="#f2b01e"/><rect x="104" y="52" width="30" height="20" rx="7" fill="none" stroke="#f2b01e"/><path d="M60 110h80l14 150h-108z" fill="#000"/><path d="M56 120l-14 120l22 4l10-100zM144 120l14 120l-22 4l-10-100z" fill="#000"/><path d="M52 255h96l8 190h-44l-12-130l-12 130h-44z" fill="#000"/><path d="M46 445h50v22h-58zM104 445h50l8 22h-58z" fill="#f2b01e"/></g></svg>';
+    me.src = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg);
+  };
+
+  /* Placeholder crowd: 15 simple ink-style people */
+  function makeSprite(i) {
+    const c = document.createElement("canvas"); c.width = 160; c.height = 200;
+    const x = c.getContext("2d"); x.lineWidth = 4; x.strokeStyle = "#000";
+    const r = 24 + (i % 5) * 2;
+    x.fillStyle = i % 3 === 0 ? "#000" : "#fff";
+    x.beginPath(); x.rect(30, 112, 100, 88); x.fill(); x.stroke();
+    x.fillStyle = "#fff"; x.beginPath(); x.ellipse(80, 72, r, r + 7, 0, 0, 7); x.fill(); x.stroke();
+    x.fillStyle = "#000"; x.beginPath(); x.arc(80, 68, r + 3, Math.PI * 1.02, Math.PI * 1.98); x.closePath(); x.fill();
+    if (i % 4 === 1) { x.beginPath(); x.arc(80, 36, 11, 0, 7); x.fill(); }
+    if (i % 4 === 2) { x.fillRect(80 - r - 3, 66, 8, 40); x.fillRect(80 + r - 5, 66, 8, 40); }
+    x.beginPath(); x.arc(70, 78, 2.5, 0, 7); x.arc(90, 78, 2.5, 0, 7); x.fill();
+    x.beginPath(); x.arc(80, 90, 8, 0.2, Math.PI - 0.2); x.stroke();
+    if (i % 2) { x.lineWidth = 3; x.beginPath(); x.arc(70, 78, 9, 0, 7); x.arc(90, 78, 9, 0, 7); x.stroke(); }
+    return c;
+  }
+
+  /* The 55 illustrated people live in one image (crowd-atlas.png); this list says where each one is: [x, y, width, height] */
+  const RECTS = [[0,0,190,277],[194,0,213,275],[411,0,194,274],[609,0,203,272],[816,0,186,271],[1006,0,212,282],[1222,0,191,275],[1417,0,197,265],[1618,0,198,261],[1820,0,192,259],[2016,0,196,271],[0,286,202,272],[206,286,204,267],[414,286,202,262],[620,286,183,256],[807,286,184,220],[995,286,180,198],[1179,286,187,221],[1370,286,187,205],[1561,286,195,215],[1760,286,182,200],[1946,286,167,220],[2117,286,203,205],[0,562,177,214],[181,562,182,199],[367,562,195,221],[566,562,178,205],[748,562,202,214],[954,562,161,199],[1119,562,192,221],[1315,562,192,205],[1511,562,184,213],[1699,562,172,199],[1875,562,166,221],[2045,562,189,204],[0,787,190,230],[194,787,202,218],[400,787,175,182],[579,787,165,206],[748,787,190,226],[942,787,186,199],[1132,787,188,200],[1324,787,193,205],[1521,787,198,222],[1723,787,177,217],[1904,787,181,184],[2089,787,198,206],[0,1021,191,222],[195,1021,161,217],[360,1021,189,183],[553,1021,197,205],[754,1021,195,221],[953,1021,197,217],[1154,1021,191,184],[1349,1021,194,204]];
+  function fromAtlas(img) {
+    return RECTS.map(([x, y, w, h]) => {
+      const c = document.createElement("canvas"); c.width = w; c.height = h;
+      c.getContext("2d").drawImage(img, x, y, w, h, 0, 0, w, h); return c;
+    });
+  }
+
+  function mk(n, dir, seed) {
+    const span = W + M * 2, a = [];
+    for (let i = 0; i < n; i++) a.push({
+      s: (i * 7 + seed) % sprites.length, off: (i / n) * span + Math.random() * 40,
+      speed: W / (10 + Math.random() * 6), size: 0.9 + Math.random() * 0.2, bob: Math.random() * 6.28, dir
+    });
+    return a;
+  }
+  function paint(cv, list, baseY, hh) {
+    const ctx = cv.getContext("2d"), span = W + M * 2;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0); ctx.clearRect(0, 0, W, H);
+    list.forEach(w => {
+      const s = sprites[w.s], f = hh / 207 * w.size, h = s.height * f, wd = s.width * f;
+      const x = (((w.off + w.dir * w.speed * clock) % span) + span) % span - M;
+      const bob = (Math.sin(clock * 12.57 + w.bob) * 0.5 + 0.5) * 10;
+      ctx.drawImage(s, x - wd / 2, baseY - h - bob, wd, h);
+    });
+  }
+  function render() {
+    if (!rows) return;
+    paint(rear, rows.rear, H * 0.76, H * 0.33);
+    paint(front, rows.front, H * 1.04, H * 0.52);
+  }
+  function resize() {
+    if (!sprites.length) return;
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const r = scene.getBoundingClientRect(); W = r.width; H = r.height;
+    [rear, front].forEach(c => { c.width = W * dpr; c.height = H * dpr; });
+    const small = W < 600;
+    rows = { rear: mk(small ? 6 : 16, 1, 0), front: mk(small ? 3 : 9, -1, 3) };
+    render();
+  }
+  function loop(now) {
+    raf = requestAnimationFrame(loop);
+    clock += Math.min((now - last) / 1000, 0.1); last = now; render();
+  }
+  function update() {
+    cancelAnimationFrame(raf);
+    if (!paused && visible && !document.hidden && !reduce) { last = performance.now(); raf = requestAnimationFrame(loop); }
+  }
+
+  scene.addEventListener("click", () => { paused = !paused; scene.setAttribute("aria-pressed", paused); update(); });
+  document.addEventListener("visibilitychange", update);
+  new IntersectionObserver(e => { visible = e[0].isIntersecting; update(); }).observe(scene);
+  let t; addEventListener("resize", () => { clearTimeout(t); t = setTimeout(resize, 150); });
+  document.getElementById("toTop").addEventListener("click", e => {
+    e.preventDefault(); scrollTo({ top: 0, behavior: reduce ? "auto" : "smooth" });
+  });
+
+  const sheet = new Image();
+  const start = list => { sprites = list; resize(); update(); };
+  sheet.onload = () => start(fromAtlas(sheet));
+  sheet.onerror = () => start(Array.from({ length: 15 }, (_, i) => makeSprite(i)));
+  sheet.src = "images/footer/crowd-atlas.png";
+})();
+</script>
+</body>
+</html>
