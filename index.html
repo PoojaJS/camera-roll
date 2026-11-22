@@ -188,7 +188,7 @@ footer{background:#000;color:#f8f7f4}
     <img class="me" id="me" src="images/footer/character.png" alt="Illustration of Theju standing still">
     <canvas id="front" aria-hidden="true"></canvas>
   </button>
-  <div class="strip">The whole world walks past. Theju stays right here.</div>
+  <div class="strip">The whole world walks past & I stay right here.</div>
 </footer>
 
 <script>
@@ -529,8 +529,7 @@ document.getElementById("grid").innerHTML = photos.map(p =>
   const start = list => { sprites = list; resize(); update(); };
   sheet.onload = () => start(fromAtlas(sheet));
   sheet.onerror = () => start(Array.from({ length: 15 }, (_, i) => makeSprite(i)));
-  sheet.src = "images/footer/crowd-atlas.png";
-})();
+  sheet.src = "images/footer/crowd-atlas.png";})();
 </script>
 </body>
 </html>
